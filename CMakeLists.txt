@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4.3)
 
-project(enet)
+project(enet LANGUAGES C)
 
 # The "configure" step.
 include(CheckFunctionExists)
@@ -19,64 +19,8 @@ set(CMAKE_EXTRA_INCLUDE_FILES "sys/types.h" "sys/socket.h")
 check_type_size("socklen_t" HAS_SOCKLEN_T BUILTIN_TYPES_ONLY)
 unset(CMAKE_EXTRA_INCLUDE_FILES)
 
-
-if (BUILD_SHARED_LIBS)
-    add_definitions(-DENET_SHARED_LIB=1)
-endif()
-
-if(MSVC)
-add_definitions(-W3)
-else()
-	add_definitions(-Wno-error)
-endif()
-
-if(HAS_FCNTL)
-    add_definitions(-DHAS_FCNTL=1)
-endif()
-if(HAS_POLL)
-    add_definitions(-DHAS_POLL=1)
-endif()
-if(HAS_GETNAMEINFO)
-    add_definitions(-DHAS_GETNAMEINFO=1)
-endif()
-if(HAS_GETADDRINFO)
-    add_definitions(-DHAS_GETADDRINFO=1)
-endif()
-if(HAS_GETHOSTBYNAME_R)
-    add_definitions(-DHAS_GETHOSTBYNAME_R=1)
-endif()
-if(HAS_GETHOSTBYADDR_R)
-    add_definitions(-DHAS_GETHOSTBYADDR_R=1)
-endif()
-if(HAS_INET_PTON)
-    add_definitions(-DHAS_INET_PTON=1)
-endif()
-if(HAS_INET_NTOP)
-    add_definitions(-DHAS_INET_NTOP=1)
-endif()
-if(HAS_MSGHDR_FLAGS)
-    add_definitions(-DHAS_MSGHDR_FLAGS=1)
-endif()
-if(HAS_SOCKLEN_T)
-    add_definitions(-DHAS_SOCKLEN_T=1)
-endif()
-
-include_directories(${PROJECT_SOURCE_DIR}/include)
-
-set(INCLUDE_FILES_PREFIX include/enet)
-set(INCLUDE_FILES
-    ${INCLUDE_FILES_PREFIX}/callbacks.h
-    ${INCLUDE_FILES_PREFIX}/enet.h
-    ${INCLUDE_FILES_PREFIX}/list.h
-    ${INCLUDE_FILES_PREFIX}/protocol.h
-    ${INCLUDE_FILES_PREFIX}/time.h
-    ${INCLUDE_FILES_PREFIX}/types.h
-    ${INCLUDE_FILES_PREFIX}/unix.h
-    ${INCLUDE_FILES_PREFIX}/utility.h
-    ${INCLUDE_FILES_PREFIX}/win32.h
-)
-
-set(SOURCE_FILES
+set(ENET_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
+set(ENET_SRC_FILES
     callbacks.c
     compress.c
     host.c
@@ -87,20 +31,58 @@ set(SOURCE_FILES
     address.c
     unix.c
     win32.c
-    interop_helpers.c)
-
-source_group(include FILES ${INCLUDE_FILES})
-source_group(source FILES ${SOURCE_FILES})
-
-add_library(enet
-    ${INCLUDE_FILES}
-    ${SOURCE_FILES}
+    interop_helpers.c
 )
+
+add_library(enet ${ENET_SRC_FILES})
+target_include_directories(enet PUBLIC ${ENET_INCLUDE_DIR})
+
+if (BUILD_SHARED_LIBS)
+    target_compile_definitions(enet PRIVATE ENET_SHARED_LIB=1)
+endif()
 
 if (WIN32)
     if (BUILD_SHARED_LIBS)
         set_property(TARGET enet PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS ON)
     endif()
 
+    target_compile_definitions(enet PRIVATE _CRT_SECURE_NO_WARNINGS)
     target_link_libraries(enet winmm ws2_32)
+endif()
+
+if(MSVC)
+	target_compile_options(enet PRIVATE -W3)
+else()	
+    target_compile_options(enet PRIVATE -Wno-error)
+endif()
+
+if(HAS_FCNTL)
+    target_compile_definitions(enet PRIVATE HAS_FCNTL=1)
+endif()
+if(HAS_POLL)
+    target_compile_definitions(enet PRIVATE HAS_POLL=1)
+endif()
+if(HAS_GETNAMEINFO)
+    target_compile_definitions(enet PRIVATE HAS_GETNAMEINFO=1)
+endif()
+if(HAS_GETADDRINFO)
+    target_compile_definitions(enet PRIVATE HAS_GETADDRINFO=1)
+endif()
+if(HAS_GETHOSTBYNAME_R)
+    target_compile_definitions(enet PRIVATE HAS_GETHOSTBYNAME_R=1)
+endif()
+if(HAS_GETHOSTBYADDR_R)
+    target_compile_definitions(enet PRIVATE HAS_GETHOSTBYADDR_R=1)
+endif()
+if(HAS_INET_PTON)
+    target_compile_definitions(enet PRIVATE HAS_INET_PTON=1)
+endif()
+if(HAS_INET_NTOP)
+    target_compile_definitions(enet PRIVATE HAS_INET_NTOP=1)
+endif()
+if(HAS_MSGHDR_FLAGS)
+    target_compile_definitions(enet PRIVATE HAS_MSGHDR_FLAGS=1)
+endif()
+if(HAS_SOCKLEN_T)
+    target_compile_definitions(enet PRIVATE HAS_SOCKLEN_T=1)
 endif()

@@ -38,7 +38,7 @@ add_library(enet ${ENET_SRC_FILES})
 target_include_directories(enet PUBLIC ${ENET_INCLUDE_DIR})
 
 if (BUILD_SHARED_LIBS)
-    target_compile_definitions(enet PRIVATE ENET_SHARED_LIB=1)
+    target_compile_definitions(enet PRIVATE ENET_DLL=1)
 endif()
 
 if (WIN32)

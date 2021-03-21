@@ -25,6 +25,7 @@ jobs:
           BUILD_SHARED="ON"
         fi
 
+        mkdir ${{ github.workspace }}/build
         cmake -S $GITHUB_WORKSPACE -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_SHARED_LIBS=$BUILD_SHARED
 
     - name: Build

@@ -36,9 +36,9 @@ jobs:
       run: |
         mkdir ${{ github.workspace }}/artifacts/
         if [ -d "${{ github.workspace }}/build/${{ matrix.build_type }}" ]; then
-          cp ${{ github.workspace }}/build/${{ matrix.build_type }}/* ${{ github.workspace }}/artifacts/
+          cp ${{ github.workspace }}/build/${{ matrix.build_type }}/* ${{ github.workspace }}/artifacts/ | true
         else
-          cp ${{ github.workspace }}/build/* ${{ github.workspace }}/artifacts/
+          cp ${{ github.workspace }}/build/* ${{ github.workspace }}/artifacts/ | true
         fi
 
     - name: Upload the artifacts

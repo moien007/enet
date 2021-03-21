@@ -34,16 +34,15 @@ jobs:
     - name: Copy the artifacts
       shell: bash
       run: |
-        shopt -s globstar
-        mkdir ${{ github.workspace }}/artifacts
+        mkdir ${{ github.workspace }}/artifacts/
         if [ -d "${{ github.workspace }}/build/${{ matrix.build_type }}" ]; then
-          cp ${{ github.workspace }}/build/${{ matrix.build_type }}/enet.* ${{ github.workspace }}/artifacts
+          cp ${{ github.workspace }}/build/${{ matrix.build_type }}/* ${{ github.workspace }}/artifacts/
         else
-          cp ${{ github.workspace }}/build/enet.* ${{ github.workspace }}/artifacts
+          cp ${{ github.workspace }}/build/* ${{ github.workspace }}/artifacts/
         fi
 
     - name: Upload the artifacts
       uses: actions/upload-artifact@v2.2.2
       with:
         name: ${{ matrix.os }}-${{ matrix.lib_type }}-${{ matrix.build_type }}
-        path: ${{ github.workspace }}/artifacts
+        path: ${{ github.workspace }}/artifacts/

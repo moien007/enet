@@ -25,12 +25,11 @@ jobs:
           BUILD_SHARED="ON"
         fi
 
-        mkdir ${{ github.workspace }}/build
-        cmake -S $GITHUB_WORKSPACE -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_SHARED_LIBS=$BUILD_SHARED
+        cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_SHARED_LIBS=$BUILD_SHARED
 
     - name: Build
       shell: bash
-      run: cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }}
+      run: cmake --build $GITHUB_WORKSPACE/build --config ${{ matrix.build_type }}
 
     - name: Upload the artifacts
       uses: actions/upload-artifact@v2.2.2
